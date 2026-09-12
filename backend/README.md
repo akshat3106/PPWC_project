@@ -15,11 +15,11 @@ Small Express API that sends real emails to students via Gmail SMTP (Nodemailer)
 The frontend's Vite dev server proxies `/api/*` to this server, so run both at once:
 
 ```
-# terminal 1
-cd attendance-system-backend && npm run dev
+# terminal 1 (from the attendance-system/ folder)
+cd backend && npm run dev
 
-# terminal 2
-cd attendance-system && npm run dev
+# terminal 2 (from the attendance-system/ folder)
+npm run dev
 ```
 
 ## API
