@@ -1,15 +1,16 @@
 # Attendly backend
 
-Small Express API that sends real emails to students via Gmail SMTP (Nodemailer). Used by the
+Small Express API that sends real emails to students via [Resend](https://resend.com). Used by the
 `attendance-system` frontend's teacher "Send mail" button.
 
 ## Setup
 
 1. `npm install`
 2. Copy `.env.example` to `.env` and fill in:
-   - `GMAIL_USER` — the Gmail address to send from.
-   - `GMAIL_APP_PASSWORD` — a 16-character [App Password](https://myaccount.google.com/apppasswords)
-     (requires 2-Step Verification on the Google account; your normal Gmail password will not work).
+   - `RESEND_API_KEY` — from [resend.com/api-keys](https://resend.com/api-keys).
+   - `MAIL_FROM_ADDRESS` — must be on a domain you've verified in
+     [Resend's dashboard](https://resend.com/domains). Until a domain is verified, Resend only
+     lets you send to your own account email (using `onboarding@resend.dev` as the from address).
 3. `npm run dev` — starts the server on `http://localhost:5000` (auto-restarts on file changes).
 
 The frontend's Vite dev server proxies `/api/*` to this server, so run both at once:

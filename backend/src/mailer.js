@@ -1,25 +1,17 @@
-import nodemailer from 'nodemailer'
+import { Resend } from 'resend'
 
-let transporter = null
+let client = null
 
-function getTransporter() {
-  if (transporter) return transporter
+function getClient() {
+  if (client) return client
 
-  const user = process.env.GMAIL_USER
-  const pass = process.env.GMAIL_APP_PASSWORD
-
-  if (!user || !pass) {
-    throw new Error(
-      'GMAIL_USER / GMAIL_APP_PASSWORD are not set. Copy .env.example to .env and fill them in.',
-    )
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) {
+    throw new Error('RESEND_API_KEY is not set. Copy .env.example to .env and fill it in.')
   }
 
-  transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: { user, pass },
-  })
-
-  return transporter
+  client = new Resend(apiKey)
+  return client
 }
 
 /**
@@ -28,18 +20,21 @@ function getTransporter() {
  */
 export async function sendMail({ to, subject, text, html }) {
   const fromName = process.env.MAIL_FROM_NAME || 'Attendly'
-  const transport = getTransporter()
+  const fromAddress = process.env.MAIL_FROM_ADDRESS
+  if (!fromAddress) {
+    throw new Error('MAIL_FROM_ADDRESS is not set. Copy .env.example to .env and fill it in.')
+  }
 
-  await transport.sendMail({
-    from: `"${fromName}" <${process.env.GMAIL_USER}>`,
+  const resend = getClient()
+  const { error } = await resend.emails.send({
+    from: `${fromName} <${fromAddress}>`,
     to,
     subject,
     text,
     html,
   })
-}
 
-export async function verifyMailer() {
-  const transport = getTransporter()
-  await transport.verify()
+  if (error) {
+    throw new Error(error.message || 'Failed to send email via Resend.')
+  }
 }
